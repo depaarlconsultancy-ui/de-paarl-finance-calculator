@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>De Paarl Consultancy – Finance Calculator</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f5f7fa;margin:0;padding:30px;color:#222}
+.container{max-width:850px;margin:auto;background:white;padding:30px;border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.08)}
+h1{margin-top:0}.subtitle{color:#666;margin-bottom:25px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{font-weight:600}.field{background:#fff8b3;border:1px solid #d9c84a;padding:10px;border-radius:7px;width:100%;box-sizing:border-box}
+.section{margin-top:25px}.row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee}
+.total{font-size:1.35rem;font-weight:700;padding-top:16px}.note{font-size:.9rem;color:#555;background:#f3f4f6;padding:12px;border-radius:8px;margin-top:18px}
+button{margin-top:20px;padding:11px 18px;border:0;border-radius:7px;background:#222;color:#fff;cursor:pointer}
+.attribution{margin-top:35px;font-size:.85rem;color:#666}
+@media(max-width:650px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Finance Management Calculator</h1>
+<div class="subtitle">De Paarl Consultancy</div>
+
+<div class="grid">
+<div><label>Number of Cashiers</label><input id="cashiers" class="field" type="number" min="0" value="0" oninput="calculate()"></div>
+<div><label>Number of Finance Assistants</label><input id="assistants" class="field" type="number" min="0" value="0" oninput="calculate()"></div>
+<div><label>Number of Devices</label><input id="devices" class="field" type="number" min="0" value="0" oninput="calculate()"></div>
+<div><label>Number of POS Devices</label><input id="pos" class="field" type="number" min="0" value="0" oninput="calculate()"></div>
+<div><label>Number of Money Counters</label><input id="money" class="field" type="number" min="0" value="0" oninput="calculate()"></div>
+<div><label>Number of Advanced Money Counters</label><input id="advanced" class="field" type="number" min="0" value="0" oninput="calculate()"></div>
+<div><label>Finance Management (Optional)</label>
+<select id="fm" class="field" onchange="calculate()"><option>No</option><option>Yes</option></select></div>
+</div>
+
+<div class="section">
+<h2>Invoice</h2>
+<div class="row"><span>Cashiers</span><span id="cashierAmt">$0.00</span></div>
+<div class="row"><span>Finance-assistant</span><span id="assistantAmt">$0.00</span></div>
+<div class="row"><span>Devices</span><span id="deviceAmt">$0.00</span></div>
+<div class="row"><span>POS devices</span><span id="posAmt">$0.00</span></div>
+<div class="row"><span>Money counters</span><span id="moneyAmt">$0.00</span></div>
+<div class="row"><span>Advanced Money counters</span><span id="advancedAmt">$0.00</span></div>
+<div class="row"><span>Finance Management</span><span id="fmAmt">$0.00</span></div>
+<div class="row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+<div class="row"><span>Discount</span><span><input id="discount" class="field" style="max-width:150px" type="number" min="0" value="0" oninput="calculate()"></span></div>
+<div class="row total"><span>Total</span><span id="total">$0.00</span></div>
+</div>
+
+<div id="warning" class="note" style="display:none"></div>
+<div class="note"><strong>Note:</strong> Devices are included when the Finance Management package is selected. Without Finance Management, devices are charged separately according to the applicable equipment rates.</div>
+
+<div class="attribution">
+This Finance Management Calculator was prepared on 1 August 2026<br>
+for De Paarl Consultancy, for Mrs. Shaiesta Nabibaks and Mrs. Rachelle Satiman.
+</div>
+</div>
+
+<script>
+function val(id){return Math.max(0,Number(document.getElementById(id).value)||0)}
+function money(n){return "$"+n.toFixed(2)}
+function fmFee(c){
+ if(c<=0)return 0;
+ return 350 + Math.max(0,Math.min(c-1,4))*100
+   + Math.max(0,Math.min(c-5,5))*75
+   + Math.max(0,Math.min(c-10,5))*60
+   + Math.max(0,c-15)*50;
+}
+function calculate(){
+ const c=val("cashiers"), a=val("assistants"), d=val("devices"), p=val("pos"), m=val("money"), ad=val("advanced");
+ const fm=document.getElementById("fm").value==="Yes";
+ const cashierAmt=c*100, assistantAmt=a*100;
+ const deviceAmt=fm?0:d*50, posAmt=p*10, moneyAmt=m*50, advancedAmt=ad*100;
+ const fmAmt=fm?fmFee(c):0;
+ const subtotal=cashierAmt+assistantAmt+deviceAmt+posAmt+moneyAmt+advancedAmt+fmAmt;
+ const discount=Math.min(val("discount"),subtotal);
+ document.getElementById("cashierAmt").textContent=money(cashierAmt);
+ document.getElementById("assistantAmt").textContent=money(assistantAmt);
+ document.getElementById("deviceAmt").textContent=money(deviceAmt);
+ document.getElementById("posAmt").textContent=money(posAmt);
+ document.getElementById("moneyAmt").textContent=money(moneyAmt);
+ document.getElementById("advancedAmt").textContent=money(advancedAmt);
+ document.getElementById("fmAmt").textContent=money(fmAmt);
+ document.getElementById("subtotal").textContent=money(subtotal);
+ document.getElementById("total").textContent=money(subtotal-discount);
+ const w=document.getElementById("warning");
+ if(c>0 && d>0 && a<1){w.style.display="block";w.textContent="At least 1 Finance Assistant is required when Cashiers and Devices are selected."}
+ else {w.style.display="none"}
+}
+calculate();
+</script>
+</body>
+</html>
