@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>De Paarl Consultancy – Finance Management Calculator</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+  }
+  .wrap { max-width: 900px; margin: 35px auto; padding: 20px; }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 18px rgba(0,0,0,.10);
+    overflow: hidden;
+  }
+  .header {
+    background: #1F4E78;
+    color: white;
+    padding: 26px 30px;
+  }
+  .header h1 { margin: 0 0 6px; font-size: 25px; }
+  .header p { margin: 0; font-size: 14px; opacity: .95; }
+  .content { padding: 28px 30px 35px; }
+  h2 { font-size: 16px; color: #1F4E78; margin: 0 0 16px; }
+  .inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+  label { display:block; font-weight: bold; font-size: 14px; margin-bottom: 7px; }
+  input {
+    width:100%; padding: 12px; border:1px solid #b7b7b7; border-radius:6px;
+    font-size:15px; background:#fff2cc;
+  }
+  table { width:100%; border-collapse:collapse; margin-top:8px; }
+  th {
+    background:#4472C4; color:white; padding:11px 9px; font-size:12px;
+    text-align:left;
+  }
+  td { padding:11px 9px; border-bottom:1px solid #ddd; font-size:14px; }
+  td.num, th.num { text-align:right; }
+  .auto { background:#d9eaf7; }
+  .totals { margin:20px 0 0 auto; max-width:420px; }
+  .total-row {
+    display:flex; justify-content:space-between; padding:9px 0;
+    border-bottom:1px solid #ddd; font-size:14px;
+  }
+  .total-row.final {
+    font-size:18px; font-weight:bold; color:#1F4E78;
+    border-bottom:0; padding-top:14px;
+  }
+  .discount-input { width:140px; padding:8px; text-align:right; }
+  .note {
+    margin-top:30px; font-size:12px; color:#555; line-height:1.55;
+  }
+  .footer {
+    margin-top:22px; padding-top:15px; border-top:1px solid #ddd;
+    font-size:12px; font-style:italic; color:#444;
+  }
+  .hint { font-size:12px; color:#666; margin-top:10px; }
+  @media(max-width:650px) {
+    .wrap { margin:10px auto; padding:8px; }
+    .content { padding:20px 16px 25px; }
+    .inputs { grid-template-columns:1fr; }
+    table { font-size:12px; }
+    th,td { padding:8px 5px; }
+    .header h1 { font-size:20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="header">
+      <h1>FINANCE MANAGEMENT INVOICE CALCULATOR</h1>
+      <p>De Paarl Consultancy</p>
+    </div>
+    <div class="content">
+      <h2>INPUTS</h2>
+      <div class="inputs">
+        <div>
+          <label for="cashiers">Number of Cashiers</label>
+          <input id="cashiers" type="number" min="0" step="1" value="0">
+        </div>
+        <div>
+          <label for="assistants">Number of Finance Assistants</label>
+          <input id="assistants" type="number" min="0" step="1" value="0">
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>DESCRIPTION</th>
+            <th class="num">QTY</th>
+            <th class="num">RATE (USD)</th>
+            <th class="num">AMOUNT (USD)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Kaspersoneel</td>
+            <td class="num" id="qCash">0</td>
+            <td class="num">$100.00</td>
+            <td class="num" id="aCash">$0.00</td>
+          </tr>
+          <tr>
+            <td>Finance-assistent</td>
+            <td class="num" id="qAssist">0</td>
+            <td class="num">$100.00</td>
+            <td class="num" id="aAssist">$0.00</td>
+          </tr>
+          <tr class="auto">
+            <td>Finance Management</td>
+            <td class="num">1</td>
+            <td class="num" id="rFM">$0.00</td>
+            <td class="num" id="aFM">$0.00</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="totals">
+        <div class="total-row"><strong>Subtotal</strong><strong id="subtotal">$0.00</strong></div>
+        <div class="total-row">
+          <strong>Discount</strong>
+          <input id="discount" class="discount-input" type="number" min="0" step="0.01" value="0">
+        </div>
+        <div class="total-row final"><span>Total</span><span id="total">$0.00</span></div>
+      </div>
+
+      <div class="note">
+        <strong>Note:</strong> Devices are included when the Finance Management package is selected.
+        Without Finance Management, devices are charged separately according to the applicable equipment rates.
+      </div>
+
+      <div class="footer">
+        This Finance Management Calculator was prepared on 1 August 2026<br>
+        for De Paarl Consultancy, for Mrs. Shaiesta Nabibaks and Mrs. Rachelle Satiman.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function financeManagementFee(n) {
+  n = Number(n) || 0;
+  if (n <= 0) return 0;
+  return 350
+    + Math.max(0, Math.min(n - 1, 4)) * 100
+    + Math.max(0, Math.min(n - 5, 5)) * 75
+    + Math.max(0, Math.min(n - 10, 5)) * 60
+    + Math.max(0, n - 15) * 50;
+}
+function money(v) {
+  return "$" + Number(v || 0).toLocaleString("en-US", {
+    minimumFractionDigits: 2, maximumFractionDigits: 2
+  });
+}
+function calculate() {
+  const cash = Math.max(0, Math.floor(Number(document.getElementById("cashiers").value) || 0));
+  const assist = Math.max(0, Math.floor(Number(document.getElementById("assistants").value) || 0));
+  const discount = Math.max(0, Number(document.getElementById("discount").value) || 0);
+  const fm = financeManagementFee(cash);
+
+  const cashAmount = cash * 100;
+  const assistAmount = assist * 100;
+  const subtotal = cashAmount + assistAmount + fm;
+  const total = subtotal - discount;
+
+  document.getElementById("qCash").textContent = cash;
+  document.getElementById("qAssist").textContent = assist;
+  document.getElementById("aCash").textContent = money(cashAmount);
+  document.getElementById("aAssist").textContent = money(assistAmount);
+  document.getElementById("rFM").textContent = money(fm);
+  document.getElementById("aFM").textContent = money(fm);
+  document.getElementById("subtotal").textContent = money(subtotal);
+  document.getElementById("total").textContent = money(total);
+}
+document.querySelectorAll("input").forEach(el => el.addEventListener("input", calculate));
+calculate();
+</script>
+</body>
+</html>
